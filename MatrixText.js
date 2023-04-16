@@ -1,13 +1,15 @@
 
+
 const Chars = ['ﾊ', 'ﾐ', 'ﾋ', 'ｰ', 'ｳ', 'ｼ', 'ﾅ', 'ﾓ', 'ﾆ', 'ｻ', 'ﾜ', 'ﾂ', 'ｵ', 'ﾘ', 'ｱ', 'ﾎ', 'ﾃ', 'ﾏ', 'ｹ', 'ﾒ', 'ｴ', 'ｶ', 'ｷ', 'ﾑ', 'ﾕ', 'ﾗ', 'ｾ', 'ﾈ', 'ｽ', 'ﾀ', 'ﾇ', 'ﾍ'];
 
 class Matri {
 
     constructor(follower = false, x, y, speed, alpha, size) {
         this.pos = createVector(x, y);
+        this.firstX = x;
         this.followers = [];
         this.follower = follower;
-        this.followerC = floor(random(1, 50));
+        this.followerC = floor(random(1, 28));
         this.textDist = 20;
         this.text = random(Chars);
         this.ded = false;
@@ -19,6 +21,9 @@ class Matri {
         this.setup();
         this.alpha = alpha;
         this.size = size;
+
+        this.red = 0;
+        this.green = 255;
     }
 
     setup() {
@@ -41,13 +46,20 @@ class Matri {
         }
         //mouse functionality 
         let disto = dist(this.pos.x, this.pos.y, mouseX, mouseY);
-        this.pos.y += disto / 200;
+        this.pos.y += disto /150;
 
-        if (mouseX > 0 && mouseX < width) {
             if (disto < 30) {
-                this.pos.x += random(-1, 1) * (disto / 2);
+                this.pos.x += random(-1, 1) * (disto );
+                this.red += disto*3;
+                this.green -= disto*3;
+            }else {
+                if(this.pos.x < this.firstX){
+                    this.pos.x += 0.4;
+                } else if(this.pos.x > this.firstX){
+                    this.pos.x -= 0.4;
+                }
             }
-        }
+        
     }
 
     move() {
@@ -61,7 +73,7 @@ class Matri {
     }
 
     draw() {
-        fill(0, 255, 0, this.alpha);
+        fill(this.red, this.green, 0, this.alpha);
         textSize(this.size);
         text(this.text, this.pos.x, this.pos.y);
     }
@@ -74,8 +86,10 @@ class Matri {
     reset(x) {
         this.followers = [];
         this.followerC = floor(random(1, 30));
-        this.pos.x = x;
+        this.pos.x = this.firstX;
         this.pos.y = 0;
+        this.red = 0;
+        this.green =255;
         this.size = random(1, 24);
         if (this.follower == false) {
             for (let i = 1; i < this.followerC; i++) {
@@ -91,6 +105,7 @@ let Linespacing = 10;
 function setup() {
     var canvas = createCanvas(900, 800);
     background(2, 2, 2);
+    //canvas.parent('MatrixFrame');
     for (let i = 0; i < width; i += Linespacing) {
         Matrix.push(new Matri(false, i, random(0, -Linespacing * 20), null, 9000, 12));
     }
